@@ -586,10 +586,12 @@ Show progress in fun ways:
 **Focus for Next Time:**
 - {What to practice next}
 
-**Streak:** 🔥 {X} days! Keep it going!
+**Streak:** 🔥 {current_streak} day(s)! Keep it going!
 
 See you tomorrow for review! Goed gedaan! 👏
 ```
+
+**NOTE:** Use the CURRENT streak value from `learner-profile.json` (DO NOT guess or assume increments). Update the streak count in the database BEFORE showing this summary.
 
 ---
 
