@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "fluent",
-      "source": ".",
+      "source": "./",
       "description": "Fluent — AI Language Learning Kit. Personal AI tutor for any target language (Dutch, Spanish, French, German, Japanese, Korean, Arabic, and more). Uses spaced repetition (SM-2), active recall, adaptive difficulty, and progress tracking across 6 databases. Run /setup to onboard, then /learn, /vocab, /writing, /speaking, /reading, /review daily.",
       "category": "education",
       "tags": ["language", "learning", "tutor", "spaced-repetition", "education", "sm2", "flashcards"],
