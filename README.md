@@ -429,8 +429,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support & Community
 
 - 📖 **Documentation:** [Full docs in this repo](docs/)
-- 💬 **Discussions:** [GitHub Discussions](https://github.com/m98/fluent/discussions)
-- 🐛 **Bug Reports:** [GitHub Issues](https://github.com/m98/fluent/issues)
+- 🐛 **Bug Reports & Questions:** [GitHub Issues](https://github.com/m98/fluent/issues)
 - 📧 **Email:** For sensitive issues
 
 ---

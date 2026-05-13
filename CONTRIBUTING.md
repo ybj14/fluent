@@ -6,7 +6,7 @@ This document provides guidelines for contributing to Fluent. Following these gu
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
 - [Getting Started](#getting-started)
@@ -17,7 +17,7 @@ This document provides guidelines for contributing to Fluent. Following these gu
 
 ---
 
-## 🤝 Code of Conduct
+## Code of Conduct
 
 This project adheres to a code of conduct that all contributors are expected to follow. By participating, you are expected to uphold this code:
 
@@ -29,7 +29,7 @@ This project adheres to a code of conduct that all contributors are expected to 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -64,9 +64,9 @@ This project adheres to a code of conduct that all contributors are expected to 
 
 ---
 
-## 💡 How Can I Contribute?
+## How Can I Contribute?
 
-### 🐛 Reporting Bugs
+### Reporting Bugs
 
 Before creating bug reports, please check existing issues to avoid duplicates.
 
@@ -100,7 +100,7 @@ If applicable, add screenshots.
 - Target Language: [e.g. Spanish]
 ```
 
-### ✨ Suggesting Enhancements
+### Suggesting Enhancements
 
 Enhancement suggestions are tracked as GitHub issues.
 
@@ -111,7 +111,7 @@ Enhancement suggestions are tracked as GitHub issues.
 - List examples of how it would work
 - Include mockups if applicable
 
-### 🌐 Adding Language-Specific Features
+### Adding Language-Specific Features
 
 Want to add optimizations for a specific language? Great!
 
@@ -136,7 +136,7 @@ languages/
     └── ...
 ```
 
-### 📚 Improving Documentation
+### Improving Documentation
 
 Documentation improvements are always welcome!
 
@@ -148,7 +148,7 @@ Documentation improvements are always welcome!
 - Creating tutorials
 - Recording video guides
 
-### 🎨 Enhancing UI/UX
+### Enhancing UI/UX
 
 Contributions to improve the learning experience:
 - Better progress visualizations
@@ -158,7 +158,7 @@ Contributions to improve the learning experience:
 
 ---
 
-## 🛠️ Development Guidelines
+## Development Guidelines
 
 ### Code Style
 
@@ -248,7 +248,7 @@ Fixes #456
 
 ---
 
-## 📝 Submission Guidelines
+## Submission Guidelines
 
 ### Pull Request Process
 
@@ -324,7 +324,7 @@ Any additional information.
 
 ---
 
-## 🏆 Recognition
+## Recognition
 
 Contributors are recognized in several ways:
 
@@ -335,14 +335,13 @@ Contributors are recognized in several ways:
 
 ---
 
-## 💬 Community
+## Community
 
 ### Getting Help
 
-- 💬 **GitHub Discussions** - Ask questions, share ideas
-- 🐛 **GitHub Issues** - Report bugs, request features
-- 📧 **Email** - For sensitive issues
-- 📖 **Documentation** - Check the docs first
+- **GitHub Issues** - Report bugs, ask questions, request features
+- **Email** - For sensitive issues
+- **Documentation** - Check the docs first
 
 ### Communication Guidelines
 
@@ -353,7 +352,7 @@ Contributors are recognized in several ways:
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 ### Learning Resources
 
@@ -364,14 +363,13 @@ Contributors are recognized in several ways:
 
 ### Project Resources
 
-- [README](README_OPENSOURCE.md) - Project overview
+- [README](README.md) - Project overview
 - [LICENSE](LICENSE) - MIT License
-- [Issues](https://github.com/m98/fluent/issues) - Known issues
-- [Discussions](https://github.com/m98/fluent/discussions) - Community forum
+- [Issues](https://github.com/m98/fluent/issues) - Bug reports, questions, and community discussion
 
 ---
 
-## 🎯 Priority Areas
+## Priority Areas
 
 We're especially interested in contributions for:
 
@@ -385,18 +383,17 @@ We're especially interested in contributions for:
 
 ---
 
-## ❓ Questions?
+## Questions
 
 Don't hesitate to ask! Here's how:
 
-1. Check existing [documentation](README_OPENSOURCE.md)
+1. Check existing [documentation](README.md)
 2. Search [past issues](https://github.com/m98/fluent/issues)
-3. Ask in [discussions](https://github.com/m98/fluent/discussions)
-4. Open a [new issue](https://github.com/m98/fluent/issues/new)
+3. Open a [new issue](https://github.com/m98/fluent/issues/new) — use the `question` label for help requests
 
 ---
 
-## 🙏 Thank You!
+## Thank You
 
 Every contribution makes this project better. Whether you're fixing a typo, reporting a bug, or adding a major feature - thank you for being part of this community!
 
