@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from fluent_paths import data_dir  # noqa: E402
+from fluent_paths import data_dir, list_languages, slugify  # noqa: E402
 
 
 def main():
@@ -67,6 +67,17 @@ def main():
 
     except Exception as e:
         print(f"[Fluent] Error loading profile: {e}", file=sys.stderr)
+
+    # Show multi-language hint if learner has more than one language
+    try:
+        langs = list_languages()
+        if len(langs) > 1:
+            active = profile.get("learner", {}).get("target_language", "")
+            others = [l for l in langs if l != slugify(active)]
+            if others:
+                print(f"[Fluent] 🌐 Also studying: {', '.join(others)} (switch with /fluent-setup)")
+    except Exception:
+        pass
 
     sys.exit(0)
 

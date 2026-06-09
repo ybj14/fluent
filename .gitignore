@@ -40,3 +40,6 @@ npm-debug.log*
 temp/
 *.json.tmp
 
+# Runtime lock files (plugin PID tracking)
+.in_use/
+

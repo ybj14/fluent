@@ -9,14 +9,25 @@ disable-model-invocation: true
 
 ## Overview
 
-One-time onboarding that seeds all 6 databases in the Fluent data directory. After setup, every other skill reads from those files — this is the bootstrap. Also handles profile updates and progress resets for returning users.
+One-time onboarding that seeds all 6 databases in the Fluent data directory. After setup, every other skill reads from those files — this is the bootstrap. Also handles profile updates, progress resets, and **language switching** for returning users.
 
 The data directory is resolved at runtime (not hardcoded to `./data/`):
 
 1. `$FLUENT_DATA_DIR` if set
-2. `$CLAUDE_PROJECT_DIR/data/` if that path contains `learner-profile.json` (clone mode)
-3. `./data/` if `./data/learner-profile.json` exists (clone mode, cwd inside repo)
+2. `$CLAUDE_PROJECT_DIR/data/` if that path contains `_active.json` or `learner-profile.json` (clone mode)
+3. `./data/` if `./data/_active.json` or `./data/learner-profile.json` exists (clone mode, cwd inside repo)
 4. `~/.claude/fluent-data/` otherwise (plugin-install default)
+
+**Per-language structure:** Each target language stores its 6 databases in a separate subdirectory. The active language is tracked in `_active.json` at the base level:
+
+```
+~/.claude/fluent-data/
+  _active.json                    # {"active_language": "mongolian", "version": 1}
+  mongolian/                      # Per-language 6 DBs
+    learner-profile.json, ...
+  french/
+    learner-profile.json, ...
+```
 
 Always resolve it via the helper rather than writing literal `data/` paths:
 
@@ -55,6 +66,8 @@ test -f "$DATA_DIR/learner-profile.json" && echo "exists" || echo "new"
 ```
 
 If it exists, jump to **Profile updates** below. Otherwise continue.
+
+**Note:** `data_dir()` now resolves to the per-language subdirectory (e.g. `~/.claude/fluent-data/mongolian/`). The `_active.json` file at the base level tracks which language is currently active. Old flat structures are auto-migrated on first access.
 
 ### 2. Welcome
 
@@ -165,7 +178,17 @@ Present:
 
 ### 5. Write databases
 
-Start from the templates in `data-examples/`. Resolve the target directory via `fluent_paths.ensure_data_dir()` (it creates the directory if missing), then create these 6 files inside it:
+Start from the templates in `data-examples/`. **First**, set the active language so that `data_dir()` resolves to the correct per-language subdirectory:
+
+```bash
+LANG_SLUG="$(python3 -c "
+import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+from fluent_paths import set_active_language
+print(set_active_language('${TARGET_LANGUAGE}'))
+")"
+```
+
+Then resolve the target directory via `fluent_paths.ensure_data_dir()` (it creates the language subdirectory if missing), and create these 6 files inside it:
 
 - `learner-profile.json` — fill all fields from the interview.
 - `progress-db.json` — empty stats.
@@ -193,21 +216,22 @@ If yes, hand off to the `fluent-learn` skill.
 ```markdown
 # 👋 Welcome back, {name}!
 
-You already have a learning profile.
+You already have a learning profile for **{target_language}**.
 
 What would you like to do?
 
 1. **Update profile** — change goals, timeline, or preferences
 2. **View current plan** — see your learning schedule
-3. **Reset progress** — start fresh (⚠️ erases all progress!)
-4. **Cancel** — keep everything as is
+3. **Reset progress** — start fresh for this language (⚠️ erases this language's progress only!)
+4. **Switch language** — start or resume a different language (keeps all progress)
+5. **Cancel** — keep everything as is
 
-**Type 1, 2, 3, or 4:**
+**Type 1, 2, 3, 4, or 5:**
 ```
 
 - **1** — ask which field, update only that field, preserve the rest.
 - **2** — render the plan section from current data. Read-only.
-- **3** — confirm twice. This deletes every file in the resolved data directory. Back up first:
+- **3** — confirm twice. This deletes every file in the resolved **per-language** data directory. Other languages are unaffected. Back up first:
 
   ```bash
   DATA_DIR="$(python3 -c "
@@ -221,7 +245,58 @@ What would you like to do?
   ```
 
   Then restart setup from Step 2.
-- **4** — exit cleanly.
+
+- **4** — **Switch language.** See "Language Switch" section below.
+
+- **5** — exit cleanly.
+
+## Language Switch (option 4)
+
+List existing languages and let the learner choose:
+
+```bash
+LANGUAGES="$(python3 -c "
+import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+from fluent_paths import list_languages
+print('\n'.join(list_languages()))
+")"
+```
+
+```markdown
+## 🌐 Switch Language
+
+Your languages:
+{numbered list of existing language slugs}
+
+Or start a new language.
+
+**Type a number to switch, or type the name of a new language:**
+```
+
+**If learner picks an existing language:**
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+from fluent_paths import set_active_language
+print(set_active_language('${CHOSEN_LANGUAGE}'))
+"
+```
+
+Then read that language's profile and greet them:
+
+```markdown
+# ✅ Switched to {target_language}!
+
+**Your {target_language} progress:**
+- 📊 Level: {current} → {target}
+- 🔥 Streak: {X} days
+- 📚 Sessions: {Y}
+
+Type `/fluent-learn` to start practicing!
+```
+
+**If learner types a new language:** collect the target language name, call `set_active_language()`, then proceed with the full setup flow from Step 3 (collect name, native language, level, etc.) and write 6 fresh DB files. The old language's data remains untouched in its subdirectory.
 
 ## Examples
 
@@ -233,18 +308,66 @@ Learner runs `/fluent-setup`. After collecting all 11 answers, compute months, g
 
 Learner: "reset my progress, I want to start over"
 
-> You're about to delete:
+> You're about to reset your **Mongolian** progress:
 > - 42 sessions
 > - 6-day streak
 > - 287 vocabulary items
 > - 12 mastered patterns
 >
+> Your other languages are unaffected.
+>
 > This is irreversible. Type `RESET` (all caps) to confirm, or anything else to cancel.
+
+### Example 3 — switching to a new language
+
+Learner: "I want to learn French too"
+
+> ## 🌐 Switch Language
+>
+> Your languages:
+> 1. mongolian (active)
+>
+> Or start a new language.
+>
+> **Type a number to switch, or type the name of a new language:**
+
+Learner types "French":
+
+> 🇫🇷 Setting up French! Let's collect your learning preferences...
+>
+> *(proceeds with full setup flow — name, native language, level, etc.)*
+>
+> Mongolian progress is saved — switch back anytime with `/fluent-setup`.
+
+### Example 4 — switching to an existing language
+
+Learner: "switch back to Mongolian"
+
+> ## 🌐 Switch Language
+>
+> Your languages:
+> 1. mongolian
+> 2. french (active)
+>
+> **Type a number to switch, or type the name of a new language:**
+
+Learner types "1":
+
+> ✅ Switched to Mongolian!
+>
+> **Your Mongolian progress:**
+> - 📊 Level: A1 → B2
+> - 🔥 Streak: 6 days
+> - 📚 Sessions: 42
+>
+> Type `/fluent-learn` to start practicing!
 
 ## Critical Rules
 
 - **Never auto-invoke.** Re-running this can reset a learner's progress. Must be an explicit `/fluent-setup`.
-- **Confirm twice before reset.** "This will erase X days of progress, Y sessions, and Z mastered words. Proceed? (yes/no)".
-- **Always seed all 6 files** — every other skill assumes they exist.
-- **Back up before reset.** Hooks may not fire here; back up manually to `.backups/pre-reset-<timestamp>/`.
+- **Confirm twice before reset.** "This will erase X days of progress, Y sessions, and Z mastered words in {language}. Your other languages are unaffected. Proceed? (yes/no)".
+- **Always call `set_active_language()` before writing DB files.** This ensures `data_dir()` resolves to the correct per-language subdirectory.
+- **Always seed all 6 files** — every other skill assumes they exist in the per-language directory.
+- **Back up before reset.** Hooks may not fire here; back up manually to `.backups/pre-reset-<timestamp>/` within the language subdirectory.
 - **Don't invent data.** Start every file empty — progress, mistakes, mastery all start at zero. The system builds up from real sessions.
+- **Language switching is non-destructive.** Switching to a new language creates a fresh set of DBs without touching other languages' data.
