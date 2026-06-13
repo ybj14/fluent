@@ -7,7 +7,7 @@
           {
             "type": "command",
             "description": "Validate JSON and back up data files after modifications",
-            "command": "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/validate-data.py",
+            "command": "python3 \"$(dirname \"$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)\")\"/validate-data.py",
             "timeout": 10
           }
         ]
@@ -19,7 +19,7 @@
           {
             "type": "command",
             "description": "Create daily backup snapshot and session summary",
-            "command": "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/session-end.py",
+            "command": "python3 \"$(dirname \"$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)\")\"/session-end.py",
             "timeout": 15
           }
         ]
@@ -31,7 +31,7 @@
           {
             "type": "command",
             "description": "Display learner stats and check for due reviews",
-            "command": "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/session-start.py",
+            "command": "python3 \"$(dirname \"$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)\")\"/session-start.py",
             "timeout": 10
           }
         ]
@@ -43,7 +43,7 @@
           {
             "type": "command",
             "description": "Safety backup before conversation compaction",
-            "command": "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/precompact-backup.sh",
+            "command": "bash \"$(dirname \"$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)\")\"/precompact-backup.sh",
             "timeout": 10
           }
         ]

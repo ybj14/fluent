@@ -237,3 +237,15 @@ def ensure_backups_dir() -> Path:
     b = backups_dir()
     b.mkdir(parents=True, exist_ok=True)
     return b
+
+
+# ---------------------------------------------------------------------------
+# CLI entry point — used by shell commands in SKILL.md and hooks.json
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    import sys as _sys
+    if len(_sys.argv) > 1 and _sys.argv[1] == "hooks":
+        print(plugin_root() / ".claude" / "hooks")
+    else:
+        print(plugin_root())
