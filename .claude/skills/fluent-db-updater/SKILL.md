@@ -27,7 +27,8 @@ Skip this skill for read-only operations (use the `fluent-progress` skill or `re
 Run from the repo root:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/update-db.py" <<'EOF'
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/update-db.py" <<'EOF'
 { ...payload... }
 EOF
 ```
@@ -44,7 +45,7 @@ Exit codes: `0` success, `1` validation error, `2` I/O error.
 **Optional fields** — omit to skip. Full canonical example (copy-paste this and fill in):
 
 ```
-${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/references/db-updater-payload.example.json
+$FLUENT_HOOKS/../references/db-updater-payload.example.json
 ```
 
 Key blocks the example covers: `skill_scores`, `errors[]`, `new_vocabulary[]`, `review_results[]`, `topics_covered`, `breakthroughs`, `focus_next_session`, `session_notes`, `achievements_earned`, `milestones`.
@@ -62,7 +63,8 @@ Key blocks the example covers: `skill_scores`, `errors[]`, `new_vocabulary[]`, `
 Always call `read-db.py` at session start to get current state + `next_session_id`. Don't read each JSON file separately:
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/read-db.py"
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/read-db.py"
 ```
 
 Returns all 6 databases plus computed fields (`due_reviews_count`, `next_session_id`, `streak_active`, `days_since_last_session`).
@@ -72,7 +74,8 @@ Returns all 6 databases plus computed fields (`due_reviews_count`, `next_session
 ### Example 1 — /fluent-review session with 5 items
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/update-db.py" <<'EOF'
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/update-db.py" <<'EOF'
 {
   "session_id": "session-012",
   "date": "2026-04-24",
@@ -108,7 +111,8 @@ EOF
 ### Example 2 — /fluent-vocab session with a new word
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/update-db.py" <<'EOF'
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/update-db.py" <<'EOF'
 {
   "session_id": "session-013",
   "date": "2026-04-25",

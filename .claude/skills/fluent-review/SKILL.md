@@ -22,7 +22,8 @@ Skip this skill when the queue is empty — suggest `/fluent-vocab` or `/fluent-
 ### 1. Load review queue
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/read-db.py"
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/read-db.py"
 ```
 
 Read `spaced-repetition.review_queue.today` and `daily_limits.review_items_per_day`. Sort items by `priority` (critical → high → medium → low). Cap at the daily limit (usually 20).

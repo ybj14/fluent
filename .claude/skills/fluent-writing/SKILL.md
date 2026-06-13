@@ -22,7 +22,8 @@ Skip this skill in favor of `/fluent-vocab` if the learner has not yet hit maste
 ### 1. Load context
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/read-db.py"
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/read-db.py"
 ```
 
 Need: `learner-profile` (level, target language, focus areas), `mistakes-db` (weak writing patterns), `mastery-db` (writing sub-skills).

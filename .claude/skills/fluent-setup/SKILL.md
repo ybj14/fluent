@@ -32,14 +32,21 @@ The data directory is resolved at runtime (not hardcoded to `./data/`):
 Always resolve it via the helper rather than writing literal `data/` paths:
 
 ```bash
-FLUENT_DATA="$(python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/ensure_data_dir.py")"
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/ensure_data_dir.py"
 ```
 
 or from Python:
 
 ```python
-import sys
-sys.path.insert(0, f"{PLUGIN_ROOT}/.claude/hooks")
+import sys, os
+from pathlib import Path
+# Locate the hooks directory via self-resolving fluent_paths.py
+_fluent_paths = next(Path.home().joinpath('.claude/plugins/cache').glob('*/fluent/*/hooks/fluent_paths.py'), None)
+if _fluent_paths:
+    sys.path.insert(0, str(_fluent_paths.parent))
+else:
+    sys.path.insert(0, os.environ.get('CLAUDE_PLUGIN_ROOT', os.environ.get('CLAUDE_PROJECT_DIR', '.')) + '/.claude/hooks')
 from fluent_paths import ensure_data_dir
 DATA = ensure_data_dir()
 ```
@@ -57,8 +64,9 @@ Skip this skill if a profile already exists and the learner did not ask to chang
 Resolve the data directory first, then probe for `learner-profile.json`:
 
 ```bash
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
 DATA_DIR="$(python3 -c "
-import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+import sys; sys.path.insert(0, '$FLUENT_HOOKS')
 from fluent_paths import data_dir
 print(data_dir())
 ")"
@@ -181,8 +189,9 @@ Present:
 Start from the templates in `data-examples/`. **First**, set the active language so that `data_dir()` resolves to the correct per-language subdirectory:
 
 ```bash
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
 LANG_SLUG="$(python3 -c "
-import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+import sys; sys.path.insert(0, '$FLUENT_HOOKS')
 from fluent_paths import set_active_language
 print(set_active_language('${TARGET_LANGUAGE}'))
 ")"
@@ -234,8 +243,9 @@ What would you like to do?
 - **3** — confirm twice. This deletes every file in the resolved **per-language** data directory. Other languages are unaffected. Back up first:
 
   ```bash
+  FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
   DATA_DIR="$(python3 -c "
-  import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+  import sys; sys.path.insert(0, '$FLUENT_HOOKS')
   from fluent_paths import data_dir
   print(data_dir())
   ")"
@@ -255,8 +265,9 @@ What would you like to do?
 List existing languages and let the learner choose:
 
 ```bash
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
 LANGUAGES="$(python3 -c "
-import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+import sys; sys.path.insert(0, '$FLUENT_HOOKS')
 from fluent_paths import list_languages
 print('\n'.join(list_languages()))
 ")"
@@ -276,8 +287,9 @@ Or start a new language.
 **If learner picks an existing language:**
 
 ```bash
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
 python3 -c "
-import sys; sys.path.insert(0, '${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks')
+import sys; sys.path.insert(0, '$FLUENT_HOOKS')
 from fluent_paths import set_active_language
 print(set_active_language('${CHOSEN_LANGUAGE}'))
 "

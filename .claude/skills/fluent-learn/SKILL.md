@@ -22,7 +22,8 @@ Skip this skill the very first time a learner runs the system — route to `/flu
 ### 1. Load learner context
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:-${CLAUDE_PROJECT_DIR:-.}}/.claude/hooks/read-db.py"
+FLUENT_HOOKS="$(dirname "$(find ~/.claude/plugins/cache -path '*/fluent/*/hooks/fluent_paths.py' -print -quit 2>/dev/null)")"
+python3 "$FLUENT_HOOKS/read-db.py"
 ```
 
 Need all 6 DBs. If any missing, direct the learner to `/fluent-setup` and stop.
